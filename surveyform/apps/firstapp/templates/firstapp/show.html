@@ -1,0 +1,25 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head> 
+    <meta charset="utf-8">
+    <title> Portfolio </title>
+    <meta name="description" content="survey form">
+    {%load staticfiles%}
+    <link rel="stylesheet" href="{% static 'firstapp/css/stylesheet.css'%}">
+</head>
+<body>
+<div class="wrapper">
+<div style="background-color:green">
+ <p> You have submitted this form {{request.session.count}} times </p>
+</div>
+<h1> Submitted Info: </h1> 
+<ul>
+    <li>{{request.session.name}} </li>
+    <li> {{request.session.location}} </li>    
+    <li> {{request.session.language}} </li>
+    <li> {{request.session.comments}} </li>
+</ul>
+
+</div>
+</body>
+</html>

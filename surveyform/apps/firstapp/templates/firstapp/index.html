@@ -1,0 +1,36 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head> 
+    <meta charset="utf-8">
+    <title> Portfolio </title>
+    <meta name="description" content="survey form">
+    {%load staticfiles%}
+    <link rel="stylesheet" href="{% static 'firstapp/css/stylesheet.css'%}">
+</head>
+<body>
+<div class="wrapper">
+<h1> Dojo Survey </h1> 
+    <form class="myform" action='/results' method='post'>
+        {% csrf_token %}
+            Your Name: <input type='text' name='name'>
+            Dojo Location: <select name="location">
+                <option value="Washington DC">D.C.</option>
+                <option value="Seattle">Seattle</option>
+                <option value="Silicon Valley">Silicon Valley</option>
+                <option value="Chicago">Chicago</option>
+            </select>
+            Favorite Language: <select name="language">
+                <option value="Python">Python</option>
+                <option value="JavaScript">JavaScript</option>
+                <option value="Java">Java</option>
+                <option value="C#">C#</option>
+            </select>
+            <textarea name="comments" rows="10" cols="30" placeholder="comments"></textarea>  
+            <input type='submit' value='Submit'>
+        
+    </form>
+
+
+</div>
+</body>
+</html>
