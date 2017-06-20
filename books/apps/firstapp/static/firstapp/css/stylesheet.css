@@ -1,0 +1,22 @@
+* {
+    margin: 0px;
+    padding: 0px;
+    /*outline: 1px dashed green; */
+}
+.wrapper {
+    padding: 40px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 10px;
+    width: 1000px;
+    height: auto;
+    background-color:#245176;
+}
+h1{
+    color: white;
+}
+img {
+    width: 50%;
+    border: 7px solid white;
+    margin-left:200px;
+}
