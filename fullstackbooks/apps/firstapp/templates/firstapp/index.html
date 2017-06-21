@@ -1,0 +1,43 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head> 
+    <meta charset="utf-8">
+    <title> Books </title>
+    <meta name="description" content="books assignment">
+    {%load staticfiles%}
+    <link rel="stylesheet" href="{% static 'firstapp/css/stylesheet.css'%}">
+</head>
+<body>
+<div class="wrapper">
+    <h1> Books </h1> 
+    <table class="datatable">
+        <tr>
+            <th>id</th>
+            <th>Title</th> 
+            <th>Author</th>
+            <th>Category</th>
+        </tr>
+    {% for book in books %}
+        <tr>
+            <td>{{book.id}}</td>
+            <td>{{book.title}}</td> 
+            <td>{{book.author}}</td>
+            <td>{{book.category}}</td>
+        </tr>
+    {% endfor %}
+    </table>
+    <br>
+    <form class="myform" action='/add_book' method='post'>
+        {% csrf_token %}
+        <input type='text' name='title' placeholder="title">
+        <input type='text' name='author' placeholder="author">
+        <input type='text' name='category' placeholder="category">
+        <input type='submit' value='Submit!'>
+    </form>
+    {% if messages %}
+        {% for message in messages %}
+            <p> {{message}}
+        {% endfor %}
+    {% endif %}
+</body>
+</html>
