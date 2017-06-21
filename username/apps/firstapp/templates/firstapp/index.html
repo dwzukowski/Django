@@ -1,0 +1,25 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head> 
+    <meta charset="utf-8">
+    <title> Username </title>
+    <meta name="description" content="username assignment">
+    {%load staticfiles%}
+    <link rel="stylesheet" href="{% static 'firstapp/css/stylesheet.css'%}">
+</head>
+<body>
+<div class="wrapper">
+
+    <form class="myform" action='/add_user' method='post'>
+        {% csrf_token %}
+        <input type='text' name='username' placeholder="username">
+        <input type='submit' value='Submit'>
+    </form>
+    <!-- flash messages --> 
+    {% if messages %}
+        {% for message in messages %}
+            <p style="color: red"> {{message}}
+        {% endfor %}
+    {% endif %}
+</body>
+</html>

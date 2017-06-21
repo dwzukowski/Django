@@ -1,0 +1,37 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head> 
+    <meta charset="utf-8">
+    <title> Courses </title>
+    <meta name="description" content="courses assignment">
+    {%load staticfiles%}
+    <link rel="stylesheet" href="{% static 'firstapp/css/stylesheet.css'%}">
+</head>
+<body>
+<div class="wrapper">
+    <h1> Courses </h1> 
+    <table class="datatable">
+        <tr>
+            <th>Course Name</th>
+            <th>Description</th> 
+            <th>Date Added</th>
+            <th>Actions</th>
+        </tr>
+    {% for course in courses %}
+        <tr>
+            <td>{{course.name}}</td>
+            <td>{{course.description}}</td> 
+            <td>{{course.created_at}}</td>
+            <td><a href='/destroy/{{course.id}}'> Remove </a></td>
+        </tr>
+    {% endfor %}
+    </table>
+    <br>
+    <form class="myform" action='/add_course' method='post'>
+        {% csrf_token %}
+        <input type='text' name='name' placeholder="Course Name">
+        <textarea style="width:25%" name='description' placeholder="description"></textarea>
+        <input type='submit' value='Add'>
+    </form>
+</body>
+</html>
