@@ -5,6 +5,7 @@ import re
 FIRSTNAME_REGEX = re.compile(r'^[a-zA-Z]{2,}$')
 LASTNAME_REGEX = re.compile(r'^[a-zA-Z]{2,}$')
 EMAIL_REGEX = re.compile(r'^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9._-]+\.[a-zA-Z]+$')
+
 class UsersManager(models.Manager):
     def add(self, firstName, lastName, email, password, confirmpassword):
         messages= []
@@ -62,7 +63,6 @@ class SecretsManger(models.Manager):
         else:
             Secret.secretsManager.filter(id=secret).delete()
             return 'success'
-
 class LikesManager(models.Manager):
     def like(self, user, secret):
         messages=[]
@@ -73,14 +73,6 @@ class LikesManager(models.Manager):
         else:
             like= Like.likesManager.create(user_id=user, secret_id=secret)
             return (True, like)
-        
-
-
-
-
-
-
-
 class User(models.Model):
     firstName= models.CharField(max_length=255)
     lastName= models.CharField(max_length=255)
@@ -89,20 +81,17 @@ class User(models.Model):
     created_at= models.DateTimeField(auto_now_add=True)
     updated_at= models.DateTimeField(auto_now=True)
     usersManager= UsersManager()
-
 class Secret(models.Model):
     message= models.TextField(max_length=5000)
     user= models.ForeignKey(User)
     created_at= models.DateTimeField(auto_now_add=True)
     updated_at= models.DateTimeField(auto_now=True)
     secretsManager= SecretsManger()
-
 class Like(models.Model):
     user= models.ForeignKey(User)
     secret= models.ForeignKey(Secret)
     created_at= models.DateTimeField(auto_now=True)
     likesManager= LikesManager()
-
 class Comment(models.Model):
     comment= models.CharField(max_length=500)
     user= models.ForeignKey(User)

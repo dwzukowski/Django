@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 from django.shortcuts import render, redirect
 from .models import User, Secret, Like, Comment
 from django.contrib import messages
+from django.db.models import Count
 
 def index(request):
     return render(request, 'firstapp/index.html')
@@ -30,19 +31,25 @@ def secrets(request):
     if not 'loggedinUser' in request.session or not request.session['loggedinUser']:
         return redirect('/')
     else:
-        secrets= Secret.secretsManager.all()
+        #secrets= Secret.secretsManager.all()
         #likes= Like.likesManager.all()
-        likescount=[]
-        for secret in secrets:
+        #likescount=[]
+        #for secret in secrets:
             #likescount.append(Like.likesManager.filter(secret_id=secret))
-            likescount.append(Like.likesManager.filter(secret_id=secret).count())
-        print likescount
+            #likescount.append(Like.likesManager.filter(secret_id=secret).count())
         #print Like.likesManager.filter(secret_id=2).count()
         context={
-            'secrets': Secret.secretsManager.all(),
+            #annotate counts number of likes 
+            'secrets': Secret.secretsManager.all().annotate(Count('like')),
             'likes': Like.likesManager.all(),
-            'likescount': likescount,
+            #'count': Secret.secretsManager.all().annotate(Count('like'))
         }
+        #print context['count'][2].id
+        #print context['count'][2].like__count
+        #'count': Secret.secretsManager.annotate(Count('message'))       
+        #print context['count'][1].id
+        #print context['count'][1].message__id
+        #print context['secrets'][1].message
         return render(request, 'firstapp/secrets.html', context)
 def logout(request):
     request.session['loggedinUser']= False
