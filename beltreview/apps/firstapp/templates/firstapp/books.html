@@ -1,0 +1,28 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head> 
+    <meta charset="utf-8">
+    <title> Beltreview </title>
+    <meta name="description" content="belt review assignment">
+    {%load staticfiles%}
+    <link rel="stylesheet" href="{% static 'firstapp/css/stylesheet.css'%}">
+</head>
+<body>
+<div class="wrapper">
+    <p> {{request.session.loggedinUser}} is signed in </p>
+    <a href="/logout"> <button>Logout</button></a>
+    <br>
+    <a href="/books/addbook"> <button>Add a Book</button></a>
+    <h1> Recent Book Reviews: </h1>
+
+    <!-- flash messages --> 
+    {% if messages %}
+        {% for message in messages %}
+            <p class=flash> {{message}}<p>
+        {% endfor %}
+    {% endif %}
+
+
+</div>
+</body>
+</html>
