@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from django.shortcuts import render, redirect
-from .models import User
+from .models import User, Book, Review, Author
 from django.contrib import messages
 import bcrypt 
 def index(request):
@@ -14,7 +14,7 @@ def register(request):
         return redirect('/')
     else:
         request.session['loggedinUser']= check[1].id
-    return redirect('/')
+        return redirect('/books')
 
 def login(request):
     check= User.usersManager.loginValidation(request.POST['userName'], request.POST['password'])
@@ -30,7 +30,11 @@ def books(request):
         messages.add_message(request, messages.ERROR, 'Please sign in')
         return redirect('/')
     else:
-        return render(request, 'firstapp/books.html')
+        context={
+            #returns the four most recent reviews
+            'reviews': Review.reviewsManager.order_by('-created_at')[:4],
+        }
+        return render(request, 'firstapp/books.html',context)
 def logout(request):
     request.session.clear()
     return redirect('/')
@@ -39,8 +43,32 @@ def addbook(request):
         messages.add_message(request, messages.ERROR, 'Please sign in')
         return redirect('/')
     else:
-        return render(request, 'firstapp/addbook.html')
+        context={
+            'authors': Author.authorsManager.all().order_by('name'),
+        }
+        return render(request, 'firstapp/addbook.html', context)
 def addreview(request):
-    
-    test= 'books'
-    return redirect('/{}'.format(test))
+    if len(request.POST['newauthor']) > 0:
+        checkauthor= Author.authorsManager.add(request.POST['newauthor'])
+    else:
+        checkauthor= (True, Author.authorsManager.get(id=request.POST['existingauthor']))
+    if not checkauthor[0]:
+        for message in checkauthor[1]:
+            messages.add_message(request, messages.ERROR, message)
+        return redirect('/books/addbook')
+    checkbook= Book.booksManager.add(request.POST['title'], checkauthor[1].id)
+    if not checkbook[0]:
+        for message in checkbook[1]:
+            messages.add_message(request, messages.ERROR, message)
+        return redirect('/books/addbook')
+    checkreview= Review.reviewsManager.add(request.POST['content'], request.POST['rating'], request.session['loggedinUser'], checkbook[1].id)
+    if not checkreview[0]:
+        for message in checkreview[1]:
+            messages.add_message(request, messages.ERROR, message)
+        return redirect('/books/addbook')
+    return redirect('/books/addbook/{}'.format(checkbook[1].id))
+def showreviews(request, book_id):
+    context={
+        'reviews': Review.reviewsManager.filter(book_id=book_id).order_by('-created_at'),
+    }
+    return render(request, 'firstapp/showreview.html', context)

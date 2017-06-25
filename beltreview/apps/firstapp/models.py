@@ -45,20 +45,37 @@ class UsersManager(models.Manager):
         else:
             user= user[0].id
             return (True, user)
-
 class BooksManager(models.Manager):
     def add(self, title, author):
         messages= []
-        checktitle = Book.booksManager.filter(title=title)
-        checkauthor= Book.booksManager.filter(author=author)
-        pass
+        checkbook = Book.booksManager.filter(title=title, author_id=author)
+        if len(title) < 2:
+            messages.append('Book title is a mandatory field')
+            return (False, messages)
+        if len(checkbook) == 1:
+            book= Book.booksManager.get(title=title)
+            return (True, book)
+        else:
+            book= Book.booksManager.create(title=title, author_id=author)
+            return (True, book)            
+class AuthorsManager(models.Manager):
+    def add(self, author):
+        messages=[]
+        checkauthor= Author.authorsManager.filter(name= author)
+        if len(checkauthor) > 0:
+            messages.append('This author is already in database, please select from dropdown')
+        if len(messages) == 0:
+            author= Author.authorsManager.create(name=author) 
+            return (True, author)
+        else:
+            return (False, messages)
 class ReviewsManager(models.Manager):
     def add(self, content, rating, user, book):
-        messages= []
-        checktitle = Book.booksManager.filter(title=title)
-        checkauthor= Book.booksManager.filter(author=author)
-        pass
-
+        if len(content) < 2:
+            messages.append('Review cannot be blank')
+            return (False, messages)
+        review= Review.reviewsManager.create(content=content, rating=rating, user_id=user, book_id=book)
+        return (True, review) 
 class User(models.Model):
     firstName= models.CharField(max_length=255)
     lastName= models.CharField(max_length=255)
@@ -68,15 +85,21 @@ class User(models.Model):
     created_at= models.DateTimeField(auto_now_add=True)
     updated_at= models.DateTimeField(auto_now=True)
     usersManager= UsersManager()
+class Author(models.Model):
+    name= models.CharField(max_length=255)
+    authorsManager= AuthorsManager()
 class Book(models.Model):
     title= models.CharField(max_length=255)
-    author= models.CharField(max_length=255)
+    author= models.ForeignKey(Author)
     created_at= models.DateTimeField(auto_now_add=True)
     updated_at= models.DateTimeField(auto_now=True)
     booksManager= BooksManager()
 class Review(models.Model):
     content= models.TextField(max_length=5000)
     rating= models.IntegerField()
-    user= models.ForeignKey(Book)
-    book= models.ForeignKey(Book, related_name='book')
+    user= models.ForeignKey(User)
+    book= models.ForeignKey(Book)
+    created_at= models.DateTimeField(auto_now_add=True)
+    updated_at= models.DateTimeField(auto_now=True)
     reviewsManager= ReviewsManager()
+

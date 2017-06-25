@@ -9,16 +9,21 @@
 </head>
 <body>
 <div class="wrapper">
+    <a href="/books"> <button>Home</button></a>
     <h1> Add a book: </h1>
-
     <form class="myform" action='/books/addreview' method='post'>
         {% csrf_token %}
         <input type="text" name="title" placeholder="Book Title">
         <input type="text" name="newauthor" placeholder="Add New Author">
-        {% for author in athors %}
-        <select value='{{author.id}}'> {{author.name}} </select>
-        {% endfor %}
-        <textarea value="review" rows="4" cols="50"> Review </textarea>
+
+        <select name="existingauthor">
+            {% for author in authors %}
+            <option value="{{author.id}}"> {{author.name}} </option> 
+            {% endfor %}
+        </select>
+        <br>
+        <br>
+        <textarea name="content" rows="4" cols="50"> Review </textarea>
         <input type="number" name="rating" min="1" max="5" placeholder="stars">
         <input type='submit' value='Submit'>
     </form>

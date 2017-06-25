@@ -9,32 +9,23 @@
 </head>
 <body>
 <div class="wrapper">
-    <p> User {{request.session.loggedinUser}} is signed in </p>
-    <a href="/logout"> <button>Logout</button></a>
-    <br>
-    <a href="/books/addbook"> <button>Add a Book</button></a>
-    <h1> Recent Book Reviews: </h1>
-
+    <a href="/books"> <button>Home</button></a>
+    <div class="top">
+    <h1> Reviews for {{reviews.0.book.title}} by {{reviews.0.book.author.name}}</h1>
     {% for review in reviews %}
     <div style="margin:5px;background-color:white">
-    <h2> {{review.book.title}}</h2>
     <h3> {{review.created_at}}
     <h4> Review by: {{review.user.firstName}} {{review.user.lastName}} 
     <p> {{review.content}}</p> 
     <img src="/static/firstapp/img/{{review.rating}}.png" style="width:10%;position:relative;right:200px">
     </div>
-    <a href="/books/addbook/{{review.book.id}}"> <button>More Reviews of {{review.book.title}}</button></a>
     {% endfor %}
-
-
-
     <!-- flash messages --> 
     {% if messages %}
         {% for message in messages %}
             <p class=flash> {{message}}<p>
         {% endfor %}
     {% endif %}
-
 
 </div>
 </body>

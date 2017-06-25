@@ -10,6 +10,6 @@ urlpatterns = [
     url(r'^logout$', views.logout),
     url(r'^books/addbook$', views.addbook),
     url(r'^books/addreview$', views.addreview),
+    url(r'^books/addbook/(?P<book_id>\d+)$', views.showreviews),
 ]
-
 
