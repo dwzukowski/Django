@@ -1,0 +1,35 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head> 
+    <meta charset="utf-8">
+    <title> Blackbelt Exam </title>
+    <meta name="description" content="Black belt exam for Dave">
+    {%load staticfiles%}
+    <link rel="stylesheet" href="{% static 'firstapp/css/stylesheet.css'%}">
+</head>
+<body>
+<div class="wrapper" style="width: 1000px">
+    <!-- flash messages --> 
+    {% if messages %}
+        {% for message in messages %}
+            <p class=flash> {{message}}<p>
+        {% endfor %}
+    {% endif %}
+    <a href="/logout"> <button>Logout</button></a>
+    <h1> Notes </h1>
+    {% for note in notes %}
+    <div style="width:200px; height: 200px; background-color: lightgoldenrodyellow; margin:10px; display: inline-block">
+    <p> {{note.content}} </p> 
+    </div>
+    {% endfor %}
+
+    <br>
+    <h1> Add Note: </h1>
+    <form class="myform" action='/notes/add' method='post'>
+        {% csrf_token %}
+        <textarea name="content" rows="4" cols="50"></textarea>
+        <input type='submit' value='Submit'>
+    </form>
+</div>
+</body>
+</html>
