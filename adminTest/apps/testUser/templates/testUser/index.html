@@ -1,0 +1,25 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head> 
+    <meta charset="utf-8">
+    <title>Class Based Forms </title>
+    <meta name="description" content="Class Based Forms">
+    {%load staticfiles%}
+    <link rel="stylesheet" href="{% static 'firstapp/css/stylesheet.css'%}">
+</head>
+<body>
+<div class="wrapper">
+    <!-- flash messages --> 
+    {% if messages %}
+        {% for message in messages %}
+            <p class=flash> {{message}}<p>
+        {% endfor %}
+    {% endif %}
+
+    {% for user in users %}
+    {{user.first_name}}
+    {{user.username}}
+    {% endfor %}
+</div>
+</body>
+</html>

@@ -2,9 +2,10 @@
 <html lang="en">
 <head> 
     <meta charset="utf-8">
-    <title> Blackbelt Exam </title>
-    <meta name="description" content="Black belt exam for Dave">
+    <title> Notes </title>
+    <meta name="description" content="Notes">
     {%load staticfiles%}
+    <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
     <link rel="stylesheet" href="{% static 'firstapp/css/stylesheet.css'%}">
 </head>
 <body>
@@ -32,4 +33,18 @@
     </form>
 </div>
 </body>
+<script>
+$('form').submit(function(e){
+    e.preventDefault()
+    $.ajax({
+        url: '/notes/add',
+        method: 'post',
+        data: $(this).serialize(),
+        success: function(serverResponse){
+        console.log("Received this from server: ", serverResponse)
+        console.log("I should probably put that in the DOM...")
+    }
+  })
+})
+</script>
 </html>

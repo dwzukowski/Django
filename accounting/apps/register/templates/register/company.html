@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Bootstrap Theme Company</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  {%load staticfiles%}
+  <link rel="stylesheet" href="{% static 'firstapp/css/stylesheet.css'%}">
+  <script>
+$(document).ready(function(){
+  // Add smooth scrolling to all links in navbar + footer link
+  $(".navbar a, footer a[href='#myPage']").on('click', function(event) {
+   // Make sure this.hash has a value before overriding default behavior
+  if (this.hash !== "") {
+    // Prevent default anchor click behavior
+    event.preventDefault();
+    // Store hash
+    var hash = this.hash;
+    // Using jQuery's animate() method to add smooth page scroll
+    // The optional number (900) specifies the number of milliseconds it takes to scroll to the specified area
+    $('html, body').animate({
+      scrollTop: $(hash).offset().top
+    }, 900, function(){
+      // Add hash (#) to URL when done scrolling (default click behavior)
+      window.location.hash = hash;
+      });
+    } // End if
+  });
+})
+</script>
+</head>
+<body>
+
+<!-- Jumbotron --> 
+<div class="jumbotron text-center">
+  <h1>Founder Friendly Financial Statements</h1> 
+
+    <h3> create basic financial statements for your company in minutes! </h3> 
+    <br>
+    <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#start">Get Started!</button> 
+    <div id="start" class="collapse out"> 
+        <div class="row">
+            <div class="col-sm-2">
+            </div> 
+            <div class="col-sm-8">
+                <form class="form-horizontal" action='/company/newconcern' method='post'>
+                {% csrf_token %}
+                    <div class="form-group">
+                        <input class="form-control" type="text" name="name" placeholder="Company Name" required>
+                    </div>
+                    <div class="form-group">
+                        <input class="form-control" type="text" name="description" placeholder="Describe your business in one sentence" required>
+                    </div>
+                    <div class="form-group">
+                        <input class="form-control" type="text" name="industry" placeholder="Industry" required>
+                    </div>
+                    <div class="form-group text-left">
+                        <label> Date of Founding:</label>
+                        <input class="form-control" type="date" name="founded_at">
+                    </div>
+                    <div class="form-group">
+                        <input class="form-control" type='submit' value='Create Company'>
+                    </div>
+                </form>
+            </div>
+            <div class="col-sm-2">
+            </div> 
+        </div>
+        
+    </div> 
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-danger alert-dismissable">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span></a>
+                <p> {{message}}<p>
+            </div> 
+        {% endfor %}
+    {% endif %}
+</div>
+
+
+<div class="container">
+<h2>{{founder.name}}'s Companies</h2>
+    <div class="table-responsive">          
+    <table class="table">
+        <thead>
+            <tr>
+            <th>Name</th>
+            <th>Industry</th>
+            <th>Founded</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for concern in concerns %}
+            <tr>
+            <td>{{concern.name}}</td>
+            <td>{{concern.industry}}</td>
+            <td>{{concern.founded_at}}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+</div>
+
+
+
+    {{concern.name}}
+
+</body>
+</html> 
+
+
+
