@@ -96,7 +96,7 @@ $(document).ready(function(){
         <tbody>
         {% for concern in concerns %}
             <tr>
-            <td>{{concern.name}}</td>
+            <td><a href="/company/financials/{{concern.id}}">{{concern.name}}</a></td>
             <td>{{concern.industry}}</td>
             <td>{{concern.founded_at}}</td>
             </tr>

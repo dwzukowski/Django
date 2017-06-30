@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Bootstrap Theme Company</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  {%load staticfiles%}
+  {% load humanize %}
+  <link rel="stylesheet" href="{% static 'firstapp/css/stylesheet.css'%}">
+  <script>
+$(document).ready(function(){
+  // Add smooth scrolling to all links in navbar + footer link
+  $(".navbar a, footer a[href='#myPage']").on('click', function(event) {
+   // Make sure this.hash has a value before overriding default behavior
+  if (this.hash !== "") {
+    // Prevent default anchor click behavior
+    event.preventDefault();
+    // Store hash
+    var hash = this.hash;
+    // Using jQuery's animate() method to add smooth page scroll
+    // The optional number (900) specifies the number of milliseconds it takes to scroll to the specified area
+    $('html, body').animate({
+      scrollTop: $(hash).offset().top
+    }, 900, function(){
+      // Add hash (#) to URL when done scrolling (default click behavior)
+      window.location.hash = hash;
+      });
+    } // End if
+  });
+})
+</script>
+</head>
+<body>
+
+<!-- Jumbotron --> 
+<div class="jumbotron text-center">
+  <h1>Founder Friendly Financial Statements</h1> 
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-danger alert-dismissable">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span></a>
+                <p> {{message}}<p>
+            </div> 
+        {% endfor %}
+    {% endif %}
+<div class="container">
+    <h3 class="text-center"> getting started </h3>
+    <p> add an asset </p> 
+    <form class="form-horizontal" action='/company/addAsset' method='post'>
+    {% csrf_token %}
+        <div class="form-group text-left">
+        <label for="assetType">Choose an asset type</label>
+        <select class="form-control" name="assetType" type="text">
+            {% for type in types %}
+            <option>{{type.name}}</option>
+            {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <input class="form-control" type="text" name="description" placeholder="description" required>
+        </div>
+        <div class="form-group text-left">
+            <label for="acquired_at">Date asset was acquired</label>
+            <input class="form-control" type="date" name="acquired_at" placeholder="Date this asset was acquired" required>
+        </div>
+        <div class="form-group">
+            <input class="form-control" type="number" min="0.00" step="0.01" name="cost" placeholder="How much did you pay for this asset? (Cash or Accounts Receivable? just enter the ammount)" required>
+        </div>
+        <div class="form-group">
+            <input class="form-control" type='submit' value='Submit'>
+        </div>
+    </form>
+{% if assets %}
+<!-- if there are any assets in the context dictonary, load the table below--> 
+    <div class="panel panel-default">
+        <!-- panel contents -->
+        <div class="panel-heading">{{assets.0.concern.name}}'s Assets</div>
+        <div class="panel-body">
+        <p>...</p>
+        </div>
+         <!-- asset list -->
+    <div class="table-responsive">          
+    <table class="table text-left">
+        <thead>
+            <tr>
+            <th>id</th>
+            <th>Asset Type</th>
+            <th> Value </th> 
+            <th> Description </th> 
+            <th> Remove </th> 
+            </tr>
+        </thead>
+        <tbody>
+        {% for asset in assets %}
+            <tr>
+            <td>{{asset.id}}</td>
+            <td>{{asset.assetType.name}}</td>
+            <td>{{asset.cost|intcomma}}</td>    
+            <td>{{asset.description}}</td>
+            <td><a href="/destroy/{{asset.id}}"><button type="button" class="btn btn-info">Delete</button></a>        
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+        <h3 class="text-left"> Total Assets: ${{total_assets.total_assets|intcomma}}
+</div>
+    </div>
+<!-- end of assets table --> 
+{%endif%}
+
+    <div class="table-responsive">          
+    <table class="table">
+        <thead>
+            <tr>
+            <th>id</th>
+            <th>Asset Type</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for type in types %}
+            <tr>
+            <td>{{type.id}}</td>
+            <td>{{type.name}}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+</div>
+
+
+
+
+
+</div>
+</body>
+</html> 

@@ -4,6 +4,7 @@ from django.db import models
 import re
 import bcrypt 
 from datetime import datetime
+from decimal import *
 NAME_REGEX = re.compile(r'^[a-zA-Z ]+ [a-zA-Z0-9_]{3,}$')
 USERNAME_REGEX = re.compile(r'^[a-zA-Z0-9.+_-]{3,}$')
 EMAIL_REGEX = re.compile(r'^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9._-]+\.[a-zA-Z]+$')
@@ -75,9 +76,27 @@ class ConcernsManager(models.Manager):
             return True, concern
 
 class AssetsManager(models.Manager):
-    pass
+    def add(self, concern, assetType, description, cost, acquired_at, accDepreciation=0):
+        messages=[]
+        clean_date= datetime.strptime(acquired_at, '%Y-%m-%d')
+        if clean_date > datetime.now():
+            messages.append('Date of acquisition can\'t be in the future')
+        if len(messages) > 0:
+            return False, messages
+        asset= Asset.manager.create(concern_id=concern, assetType_id=assetType, description=description, cost=cost, accDepreciation=accDepreciation,acquired_at=acquired_at)
+        return True, asset
+    def destroy(self, asset_id):
+        Asset.manager.get(id=asset_id).delete()
+
 class AssetTypesManager(models.Manager):
-    pass
+    def add(self, name):
+        messages=[]
+        if len(name) < 1:
+            messages.append('type required')
+            return False, messages
+        newtype= AssetType.manager.create(name=name)
+        return True, newtype
+
 class LiabilityTypesManager(models.Manager):
     pass
 class LiabilitiesManager(models.Manager):
@@ -108,8 +127,8 @@ class Asset(models.Model):
     concern= models.ForeignKey(Concern)
     assetType= models.ForeignKey(AssetType)
     description= models.CharField(max_length=255)
-    cost= models.CharField(max_length=255)
-    accDepreciation= models.CharField(max_length=255)
+    cost= models.DecimalField(max_digits=12, decimal_places=2)
+    accDepreciation= models.DecimalField(max_digits=12, decimal_places=2)
     acquired_at= models.DateField()
     created_at= models.DateTimeField(auto_now_add=True)
     updated_at= models.DateTimeField(auto_now=True)
@@ -121,8 +140,8 @@ class Liability(models.Model):
     concern= models.ForeignKey(Concern)
     liabilityType= models.ForeignKey(LiabilityType)
     description= models.CharField(max_length=255)
-    amount= models.CharField(max_length=255)
-    accDepreciation= models.CharField(max_length=255)
+    amount= models.DecimalField(max_digits=12, decimal_places=2)
+    accDepreciation= models.DecimalField(max_digits=12, decimal_places=2)
     acquired_at= models.DateField()
     created_at= models.DateTimeField(auto_now_add=True)
     updated_at= models.DateTimeField(auto_now=True)
@@ -130,7 +149,7 @@ class Liability(models.Model):
 class Equity(models.Model):
     concern= models.ForeignKey(Concern)
     description= models.CharField(max_length=255)
-    amount= models.CharField(max_length=255)
+    amount= models.DecimalField(max_digits=12, decimal_places=2)
     manager= EquitiesManager()
 
 

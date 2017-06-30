@@ -2,8 +2,10 @@
 from __future__ import unicode_literals
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from .models import Founder, Concern, Asset, Liability, Equity
+from .models import Founder, Concern, Asset, Liability, Equity, AssetType
 import bcrypt 
+from decimal import *
+from django.db.models import Count, Min, Sum, Avg
 
 def index(request):
     return render(request, 'register/index.html')
@@ -23,7 +25,7 @@ def company(request):
     else:
         context={
             'founder': Founder.manager.get(id=request.session['loggedinUser']),
-            'concerns': Concern.manager.filter(founder_id=request.session['loggedinUser'])
+            'total': Concern.manager.filter(founder_id=request.session['loggedinUser'])
         }
         print context
         print context['concerns'][0].founder.name
@@ -49,3 +51,47 @@ def newconcern(request):
         return redirect('/company')
     request.session['loggedinConcern']= check[1].id
     return redirect('/company')
+def financials(request, concern_id):
+    context={
+        'concern': Concern.manager.get(id=concern_id)
+    }
+    print context['concern'] 
+    return render(request, 'register/financials.html', context)
+def getstarted(request, concern_id):
+    request.session['loggedinConcern']= concern_id
+    context={
+        'types': AssetType.manager.all(),
+        'assets': Asset.manager.filter(concern_id=request.session['loggedinConcern']),
+        'total_assets': Asset.manager.filter(concern_id=request.session['loggedinConcern']).aggregate(total_assets=Sum('cost')),
+    }
+    print context['total_assets']
+    return render(request,'register/getstarted.html', context)
+def addAssetType(request):
+    check= AssetType.manager.add(request.POST['assettype'])
+    print check
+    if not check[0]:
+        for message in check[1]:
+            messages.add_message(request, messages.ERROR, message)
+    return redirect('/company/financials/getstarted/{}'.format(request.session['loggedinConcern']))
+
+def addAsset(request):
+    print request.POST['assetType']
+    assetType= AssetType.manager.filter(name=request.POST['assetType'])
+    assetType= assetType[0].id
+    check= Asset.manager.add(request.session['loggedinConcern'], assetType, request.POST['description'], Decimal(request.POST['cost']), str(request.POST['acquired_at']))
+    print check
+    #print getcontext()
+    #print type(Decimal(request.POST['cost']))
+    if not check[0]:
+        for message in check[1]:
+            messages.add_message(request, messages.ERROR, message)
+    return redirect('/company/financials/getstarted/{}'.format(request.session['loggedinConcern']))
+
+def destroyAsset(request, asset_id):
+    context={
+        'asset': Asset.manager.get(id=asset_id),
+    }
+    return render(request,'register/confirmAssetDestroy.html', context)
+def confirmDestroyAsset(request, asset_id):
+    Asset.manager.destroy(asset_id)
+    return redirect('/company/financials/getstarted/{}'.format(request.session['loggedinConcern']))
