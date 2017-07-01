@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Bootstrap Theme Company</title>
+  <title>Founder Friendly Financial Statements</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
@@ -47,8 +47,8 @@ $(document).ready(function(){
         {% endfor %}
     {% endif %}
 <div class="container">
-    <h3 class="text-center"> getting started </h3>
-    <p> add an asset </p> 
+    <!-- Assets Container--> 
+    <h3 class="text-center"> Add an Asset </h3> 
     <form class="form-horizontal" action='/company/addAsset' method='post'>
     {% csrf_token %}
         <div class="form-group text-left">
@@ -72,12 +72,13 @@ $(document).ready(function(){
         <div class="form-group">
             <input class="form-control" type='submit' value='Submit'>
         </div>
+    
     </form>
 {% if assets %}
 <!-- if there are any assets in the context dictonary, load the table below--> 
     <div class="panel panel-default">
         <!-- panel contents -->
-        <div class="panel-heading">{{assets.0.concern.name}}'s Assets</div>
+        <div class="panel-heading"><strong>{{assets.0.concern.name}}'s Assets</strong></div>
         <div class="panel-body">
         <p>...</p>
         </div>
@@ -108,10 +109,10 @@ $(document).ready(function(){
     </div>
         <h3 class="text-left"> Total Assets: ${{total_assets.total_assets|intcomma}}
 </div>
-    </div>
+</div> 
 <!-- end of assets table --> 
 {%endif%}
-
+<!--
     <div class="table-responsive">          
     <table class="table">
         <thead>
@@ -130,11 +131,114 @@ $(document).ready(function(){
         </tbody>
     </table>
     </div>
+    </div>
+    --> 
+    <!-- LiabilityType
+    <form class="form-horizontal" action='/createLiabilityType' method='post'>
+    {% csrf_token %}
+        <div class="form-group">
+            <input class="form-control" type="text" name="type" placeholder="LiabilityType" required>
+        </div>
+        <div class="form-group">
+            <input class="form-control" type='submit' value='Submit'>
+        </div>
+    </form> 
+        <div class="table-responsive">          
+    <table class="table">
+        <thead>
+            <tr>
+            <th>id</th>
+            <th>Liability Type</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for liabilityType in liabilityTypes %}
+            <tr>
+            <td>{{liabilityType.id}}</td>
+            <td>{{liabilityType.name}}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+ --> 
+
+    <!-- Liabilities Container--> 
+    <div class="container">
+    <h3 class="text-center"> Add a liability </h3> 
+    <form class="form-horizontal" action='/company/addLiability' method='post'>
+    {% csrf_token %}
+        <div class="form-group text-left">
+        <label for="liabilityType">Choose a liability type</label>
+        <select class="form-control" name="liabilityType" type="text">
+            {% for liabilityType in liabilityTypes %}
+            <option>{{liabilityType.name}}</option>
+            {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <input class="form-control" type="text" name="description" placeholder="description" required>
+        </div>
+        <div class="form-group text-left">
+            <label for="incurred_at">Date liability was incurred</label>
+            <input class="form-control" type="date" name="incurred_at" placeholder="Date this liability was incurred" required>
+        </div>
+        <div class="form-group">
+            <input class="form-control" type="number" min="0.00" step="0.01" name="value" placeholder="How much did you owe?" required>
+        </div>
+        <div class="form-group">
+            <input class="form-control" type='submit' value='Submit'>
+        </div>
+    </form>
+<!-- liabilities table --> 
+{% if liabilities %}
+    <div class="panel panel-default">
+        <!-- panel contents -->
+        <div class="panel-heading"><strong>{{liabilities.0.concern.name}}'s Liabilities</strong></div>
+        <div class="panel-body">
+        <p>...</p>
+        </div>
+         <!-- asset list -->
+    <div class="table-responsive">          
+    <table class="table text-left">
+        <thead>
+            <tr>
+            <th>id</th>
+            <th>Liability Type</th>
+            <th> Value </th> 
+            <th> Description </th> 
+            <th> Remove </th> 
+            </tr>
+        </thead>
+        <tbody>
+        {% for liability in liabilities %}
+            <tr>
+            <td>{{liability.id}}</td>
+            <td>{{liability.liabilityType.name}}</td>
+            <td>{{liability.value|intcomma}}</td>    
+            <td>{{liability.description}}</td>
+            <td><a href="/destroy/liability/{{liability.id}}"><button type="button" class="btn btn-info">Delete</button></a>        
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+        <h3 class="text-left"> Total Liabilities: ${{total_liabilities.total_liabilities|intcomma}}
 </div>
+{% endif %}
+</div> <!-- end liability container -->  
+<div class="container"> <!-- Equity --> 
+{% if assets %}
+    <div class="panel panel-default">
+        <!-- panel contents -->
+        <div class="panel-heading"><strong>{{assets.0.concern.name}}'s Equity</strong></div>
+        <h3 class="text-left"> Total Equity: 
 
-
-
-
+    </div>
+</div>
+{% endif %}
+<a href="/logout"><button type="button" class="btn btn-info">Logout</button></a> 
+</div> <!-- end Equity --> 
 
 </div>
 </body>

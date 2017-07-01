@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Bootstrap Theme Company</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+{%load staticfiles%}
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+  <link rel="stylesheet" href="{% static 'firstapp/css/stylesheet.css'%}">
+</head>
+<body>
+
+<div class="container">
+    <h1 class="warn"> Are you sure you want to delete?</h1>
+    <ul>
+        <li> {{liability.liabilityType.name}}</li>
+        <li> Description: {{liability.description}}</li>
+        <li> added on {{liability.created_at.date}}</li>
+        <li> {{liability.id}} </li>
+    </ul> 
+    <form class="form-horizontal" action='/destroy/liability/confirm/{{liability.id}}' method='post'>
+    {% csrf_token %}
+        <div class="form-group">
+            <input class="form-control btn btn-danger" type='submit' value='DELETE FOREVER'>
+        </div>
+    </form>
+</div>
+</body>
+</html> 
+

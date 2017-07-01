@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from .models import Founder, Concern, Asset, Liability, Equity, AssetType
+from .models import Founder, Concern, Asset, Liability, Equity, AssetType, LiabilityType
 import bcrypt 
 from decimal import *
 from django.db.models import Count, Min, Sum, Avg
@@ -25,10 +25,8 @@ def company(request):
     else:
         context={
             'founder': Founder.manager.get(id=request.session['loggedinUser']),
-            'total': Concern.manager.filter(founder_id=request.session['loggedinUser'])
+            'concerns': Concern.manager.filter(founder_id=request.session['loggedinUser'])
         }
-        print context
-        print context['concerns'][0].founder.name
         return render(request, 'register/company.html', context)
 def logout(request):
     request.session.clear()
@@ -63,8 +61,10 @@ def getstarted(request, concern_id):
         'types': AssetType.manager.all(),
         'assets': Asset.manager.filter(concern_id=request.session['loggedinConcern']),
         'total_assets': Asset.manager.filter(concern_id=request.session['loggedinConcern']).aggregate(total_assets=Sum('cost')),
+        'liabilityTypes': LiabilityType.manager.all(),
+        'liabilities': Liability.manager.filter(concern_id=request.session['loggedinConcern']),
+        'total_liabilities': Liability.manager.filter(concern_id=request.session['loggedinConcern']).aggregate(total_liabilities=Sum('value')),
     }
-    print context['total_assets']
     return render(request,'register/getstarted.html', context)
 def addAssetType(request):
     check= AssetType.manager.add(request.POST['assettype'])
@@ -94,4 +94,29 @@ def destroyAsset(request, asset_id):
     return render(request,'register/confirmAssetDestroy.html', context)
 def confirmDestroyAsset(request, asset_id):
     Asset.manager.destroy(asset_id)
+    return redirect('/company/financials/getstarted/{}'.format(request.session['loggedinConcern']))
+
+def createLiabilityType(request):
+    check= LiabilityType.manager.add(request.POST['type'])
+    print request.POST['type']
+    if not check[0]:
+        for message in check[1]:
+            messages.add_message(request, messages.ERROR, message)
+    return redirect('/company/financials/getstarted/{}'.format(request.session['loggedinConcern']))
+def addLiability(request):
+    liabilityType= LiabilityType.manager.get(name=request.POST['liabilityType'])
+    liabilityType= liabilityType.id
+    check= Liability.manager.add(request.session['loggedinConcern'], liabilityType, request.POST['description'], Decimal(request.POST['value']), str(request.POST['incurred_at']))
+    if not check[0]:
+        for message in check[1]:
+            messages.add_message(request, messages.ERROR, message)
+    return redirect('/company/financials/getstarted/{}'.format(request.session['loggedinConcern']))
+
+def destroyLiability(request, liability_id):
+    context={
+        'liability': Liability.manager.get(id=liability_id),
+    }
+    return render(request,'register/confirmLiabilityDestroy.html', context)
+def confirmDestroyLiability(request, liability_id):
+    Liability.manager.destroy(liability_id)
     return redirect('/company/financials/getstarted/{}'.format(request.session['loggedinConcern']))

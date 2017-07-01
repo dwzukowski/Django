@@ -98,9 +98,25 @@ class AssetTypesManager(models.Manager):
         return True, newtype
 
 class LiabilityTypesManager(models.Manager):
-    pass
+    def add(self, name):
+        messages=[]
+        if len(name) < 1:
+            messages.append('type required')
+            return False, messages
+        newtype= LiabilityType.manager.create(name=name)
+        return True, newtype
 class LiabilitiesManager(models.Manager):
-    pass
+    def add(self, concern, liabilityType, description, value, incurred_at):
+        messages=[]
+        clean_date= datetime.strptime(incurred_at, '%Y-%m-%d')
+        if clean_date > datetime.now():
+            messages.append('Date of liability can\'t be in the future')
+        if len(messages) > 0:
+            return False, messages
+        liability= Liability.manager.create(concern_id=concern, liabilityType_id=liabilityType, description=description, value=value, incurred_at=incurred_at)
+        return True, liability
+    def destroy(self, liability_id):
+        Liability.manager.get(id=liability_id).delete()
 class EquitiesManager(models.Manager):
     pass
 class Founder(models.Model):
@@ -140,16 +156,15 @@ class Liability(models.Model):
     concern= models.ForeignKey(Concern)
     liabilityType= models.ForeignKey(LiabilityType)
     description= models.CharField(max_length=255)
-    amount= models.DecimalField(max_digits=12, decimal_places=2)
-    accDepreciation= models.DecimalField(max_digits=12, decimal_places=2)
-    acquired_at= models.DateField()
+    value= models.DecimalField(max_digits=12, decimal_places=2)
+    incurred_at= models.DateField()
     created_at= models.DateTimeField(auto_now_add=True)
     updated_at= models.DateTimeField(auto_now=True)
     manager= LiabilitiesManager()
 class Equity(models.Model):
     concern= models.ForeignKey(Concern)
     description= models.CharField(max_length=255)
-    amount= models.DecimalField(max_digits=12, decimal_places=2)
+    value= models.DecimalField(max_digits=12, decimal_places=2)
     manager= EquitiesManager()
 
 
